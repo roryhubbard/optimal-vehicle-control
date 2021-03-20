@@ -9,8 +9,11 @@ class KinematicBicycle:
     """
 
     def __init__(self, lf, lr):
+        # model constants
         self.lf = lf  # distance from front axle to tracking point
         self.lr = lr  # distance from rear axle to tracking point
+
+        # dynamic parameters
         self.x = 0. # position
         self.y = 0.  # position
         self.yaw = 0.  # heading angle
