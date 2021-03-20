@@ -22,9 +22,9 @@ MPH_to_MS = 0.447
 
 
 def main():
-    '''
+    """
     Comparison between CTRV and normal Kinematic Bicycle Model
-    '''
+    """
     front_steering_bike = FrontWheelSteeringBicycle(3., 0.)
     ctrv_bike = CTRVBicycle(3., 0.)
 
