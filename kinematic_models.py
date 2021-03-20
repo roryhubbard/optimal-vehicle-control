@@ -1,5 +1,4 @@
 import math
-import numpy as np
 
 from lib.utils import clip_to_pi
 
