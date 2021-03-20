@@ -57,8 +57,8 @@ class KinematicBicycle:
 class FrontWheelSteeringBicycle(KinematicBicycle):
     """
     Assumptions:
-        - 0 slip angle
-        - 0 rear tire steering angle
+    - 0 slip angle
+    - 0 rear tire steering angle
     """
 
     def update_state(self, v, steering_angle, dt):
@@ -73,7 +73,7 @@ class CTRVBicycle(FrontWheelSteeringBicycle):
     """
     Constant Turn Rate and Velocity
     Assumptions:
-        - same as FrontWheelSteeringBicycle
+    - same as FrontWheelSteeringBicycle
     """
 
     def update_state(self, v, steering_angle, dt):
