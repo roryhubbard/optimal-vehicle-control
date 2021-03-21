@@ -28,12 +28,12 @@ def main():
     front_steering_bike = FrontWheelSteeringBicycle(3., 0.)
     ctrv_bike = CTRVBicycle(3., 0.)
 
-    front_steering_x = [front_steering_bike.x]
-    front_steering_y = [front_steering_bike.y]
+    front_steering_x = [front_steering_bike.X]
+    front_steering_y = [front_steering_bike.Y]
     front_steering_yaw = [front_steering_bike.yaw]
 
-    ctrv_x = [ctrv_bike.x]
-    ctrv_y = [ctrv_bike.y]
+    ctrv_x = [ctrv_bike.X]
+    ctrv_y = [ctrv_bike.Y]
     ctrv_yaw = [ctrv_bike.yaw]
 
     v = 20 * MPH_to_MS
@@ -43,13 +43,13 @@ def main():
 
     for _ in range(int(T / dt)):
         ctrv_bike.update_state(v, steering_angle, dt)
-        ctrv_x.append(ctrv_bike.x)
-        ctrv_y.append(ctrv_bike.y)
+        ctrv_x.append(ctrv_bike.X)
+        ctrv_y.append(ctrv_bike.Y)
         ctrv_yaw.append(ctrv_bike.yaw * 180 / math.pi)
 
         front_steering_bike.update_state(v, steering_angle, dt)
-        front_steering_x.append(front_steering_bike.x)
-        front_steering_y.append(front_steering_bike.y)
+        front_steering_x.append(front_steering_bike.X)
+        front_steering_y.append(front_steering_bike.Y)
         front_steering_yaw.append(front_steering_bike.yaw * 180 / math.pi)
 
     fig, ax = plt.subplots(ncols=2)
