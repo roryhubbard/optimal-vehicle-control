@@ -20,17 +20,18 @@ class DynamicBicycle:
         self.m = m  # vehicle mass
 
         # dynamic parameters
-        self.x = 0. # position
-        self.y = 0.  # position
-        self.yaw = 0.  # heading angle
+        self.X = 0. # global position
+        self.Y = 0.  # global position
+        self.yaw = 0.  # yaw angle
+        self.yawd = 0.  # yaw rate
         self.vx = 0.  # longitudinal speed
         self.vy = 0.  # lateral speed
-        self.steering_angle  # wheel angle of front axle
+        self.delta  # wheel angle of front axle
 
-        # state space
+        # later state space
         # X = A*X + B*U
         # Y = C*X + D*U
-        # X = [y, yd, yaw, yawd] where y = radius of curvature
+        # X = [y, yd, yaw, yawd]
         # U = [front wheel steering angle, acceleration]
         self.A = np.empty((4, 4))  # depends on longitudinal velocity
         self.B = np.array([
@@ -42,40 +43,56 @@ class DynamicBicycle:
         self.C = np.eye(4)  # complete observability
         self.D = np.zeros((4, 2))  # set feedthrough matrix to 0 as usual
 
-    def set_state(self, x, y, yaw):
+    def set_state(self, X, Y, yaw):
         """
         set global position and orientation
         """
-        self.x = x
-        self.y = y
+        self.X = X
+        self.Y = Y
         self.yaw = yaw
 
-    def update_state(self, acceleration, steering_angle, dt):
+    def update_state(self, delta, accel, dt):
         """
         update state given parameters:
-        - acceleration
         - front wheel steering angle
+        - acceleration
         - timestep length
         assumes constant velocity
         """
+        # model constants
         lf = self.lf
         lr = self.lr
         Caf = self.Caf
         Car = self.Car
         Iz = self.Iz
         m = self.m
-        vx = self.vx
+
+        vx = max(self.vx, 0.01)  # appears in denominator
         vy = self.vy
+        yaw = self.yaw
+        yawd = self.yawd
 
-        yaw_rate = ??
-
-        # state space representation
+        # [y, yd, yaw, yawd]
+        # y is technically the radius of curvature but it doesn't contribute to
+        # the update so just set it to 0
+        X = np.array([0, vy, yaw, yawd])
         self.A = np.array([
             [0, 1, 0, 0],
             [0, -(2*Caf+2*Car)/(m*vx), 0, -vx-(2*Caf*lf-2*Car*lf)/(m*vx)],
             [0, 0, 0, 1],
             [0, -(2*lf*Caf-2*lr*Car)/(Iz*vx), 0, -(2*lf**2*Caf+2*lr**2+Car)/(Iz*vx)],
         ])
+        U = np.array([delta, accel])
 
-        ax = acceleration + yaw_rate + vy
-        self.vx += ax * dt
+        Xd = self.A @ X + self.B @ U
+        Y = self.C @ X + self.D @ U
+
+        self.yaw += Xd[3] * dt
+        self.yawd += Xd[4] * dt
+
+        # TODO
+        self.X += 0.
+        self.Y = 0.  # global position
+        self.vx = 0.  # longitudinal speed
+        self.vy = 0.  # lateral speed
+        self.delta = 0.  # wheel angle of front axle
