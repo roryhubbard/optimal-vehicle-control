@@ -53,7 +53,7 @@ class KinematicBicycle(VehicleModel):
             self.lf + self.lr)
 
 
-class FrontWheelSteeringBicycle(KinematicBicycle):
+class FrontWheelSteering(KinematicBicycle):
     """
     Only the front axle is used to steer
 
@@ -71,7 +71,66 @@ class FrontWheelSteeringBicycle(KinematicBicycle):
         super().update(v, delta, 0., dt)
 
 
-class CTRVBicycle(FrontWheelSteeringBicycle):
+class RearWheelSteering(KinematicBicycle):
+    """
+    Only the real axle is used to steer
+
+    Assumptions:
+    - same as parent
+    - 0 slip angle
+    - 0 front tire steering angle
+    """
+
+    def update(self, v, delta, dt):
+        """
+        Same update calculation as KinematicBicycle but front wheel steering
+        angle will always be set to 0
+        """
+        super().update(v, 0., delta, dt)
+
+
+class FourWheelSteering(KinematicBicycle):
+    """
+    Both axles are used to steer. The front axle is always equal and
+    opposite of the rear axle. Allows for smaller turn radiuses for the same
+    steering angle.
+
+    Assumptions:
+    - same as parent
+    - 0 slip angle
+    - front tire and rear tire steering angle are equal in magnitude and
+      opposite in direction
+    """
+
+    def update(self, v, delta, dt):
+        """
+        Same update calculation as KinematicBicycle but front wheel and rear
+        wheel will always be equal and opposite
+        """
+        super().update(v, delta, -delta, dt)
+
+
+class CrabSteering(KinematicBicycle):
+    """
+    Both axles are used to steer. The front axle and rear axle turn in lockstep.
+    Allows for translations with zero yaw rotation.
+
+    Assumptions:
+    - same as parent
+    - 0 slip angle
+    - front tire and rear tire steering angle are euqal in magnitude and
+      direction
+    """
+
+    def update(self, v, delta, dt):
+        """
+        Same update calculation as KinematicBicycle but front wheel and rear
+        wheel will always be exactly equal
+        """
+        super().update(v, delta, delta, dt)
+
+
+class CTRV(FrontWheelSteering):
     """
     Constant Turn Rate and Velocity
 
