@@ -58,9 +58,9 @@ class FrontWheelSteering(KinematicBicycle):
     Only the front axle is used to steer
 
     Assumptions:
-    - same as parent
+    - same as KinematicBicycle
     - 0 slip angle
-    - 0 rear tire steering angle
+    - 0 rear wheel steering angle
     """
 
     def update(self, v, delta, dt):
@@ -76,9 +76,9 @@ class RearWheelSteering(KinematicBicycle):
     Only the real axle is used to steer
 
     Assumptions:
-    - same as parent
+    - same as KinematicBicycle
     - 0 slip angle
-    - 0 front tire steering angle
+    - 0 front wheel steering angle
     """
 
     def update(self, v, delta, dt):
@@ -96,9 +96,9 @@ class FourWheelSteering(KinematicBicycle):
     steering angle.
 
     Assumptions:
-    - same as parent
+    - same as KinematicBicycle
     - 0 slip angle
-    - front tire and rear tire steering angle are equal in magnitude and
+    - front wheel and rear wheel steering angle are equal in magnitude and
       opposite in direction
     """
 
@@ -116,9 +116,9 @@ class CrabSteering(KinematicBicycle):
     Allows for translations with zero yaw rotation.
 
     Assumptions:
-    - same as parent
+    - same as KinematicBicycle
     - 0 slip angle
-    - front tire and rear tire steering angle are euqal in magnitude and
+    - front wheel and rear wheel steering angle are euqal in magnitude and
       direction
     """
 
@@ -135,7 +135,7 @@ class CTRV(FrontWheelSteering):
     Constant Turn Rate and Velocity
 
     Assumptions:
-    - same as parent
+    - same as FrontWheelSteering
     - constant yaw rate and velocity during updates
     """
 
