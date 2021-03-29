@@ -1,7 +1,7 @@
 import math
 import matplotlib.pyplot as plt
 from dynamic_models import DynamicBicycle
-from kinematic_models import CTRVBicycle, FrontWheelSteeringBicycle
+from kinematic_models import CTRV, FrontWheelSteering
 
 
 plt.rcParams['figure.figsize'] = [16, 10]
@@ -34,8 +34,8 @@ def main():
     m = 2000.0
 
     dynamic_bike = DynamicBicycle(lf, lr, Ca, Ca, Iz, m)
-    front_steering_bike = FrontWheelSteeringBicycle(3., 0.)
-    ctrv_bike = CTRVBicycle(3., 0.)
+    front_steering_bike = FrontWheelSteering(3., 0.)
+    ctrv_bike = CTRV(3., 0.)
 
     start_x = start_y = start_yaw = 0.
     start_v = 20 * MPH_to_MS
