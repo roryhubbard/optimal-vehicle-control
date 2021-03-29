@@ -1,7 +1,13 @@
-import math
+import sys
+from pathlib import Path
+from math import sin, cos, tan, atan2
+
+root = str(Path(__file__).parents[1].resolve())
+if root not in sys.path:
+    sys.path.append(root)
 
 from lib.utils import clip_to_pi
-from model_templates import VehicleModel
+from models.model_templates import VehicleModel
 
 
 class KinematicBicycle(VehicleModel):
@@ -36,11 +42,11 @@ class KinematicBicycle(VehicleModel):
         Assumptions:
         - zero acceleration
         """
-        yaw_rate = v * math.cos(self.beta) / (self.lf + self.lr) \
-            * (math.tan(delta_f) - math.tan(delta_r))
+        yaw_rate = v * cos(self.beta) / (self.lf + self.lr) \
+            * (tan(delta_f) - tan(delta_r))
 
-        self.X += v * math.cos(self.yaw + self.beta) * dt
-        self.Y += v * math.sin(self.yaw + self.beta) * dt
+        self.X += v * cos(self.yaw + self.beta) * dt
+        self.Y += v * sin(self.yaw + self.beta) * dt
 
         self.yaw += yaw_rate * dt
         self.yaw = clip_to_pi(self.yaw)
@@ -48,8 +54,8 @@ class KinematicBicycle(VehicleModel):
         self.v = v
         self.delta_f = delta_f
         self.delta_r = delta_r
-        self.beta = math.atan2(
-            self.lf * math.tan(delta_r) + self.lr * math.tan(delta_f),
+        self.beta = atan2(
+            self.lf * tan(delta_r) + self.lr * tan(delta_f),
             self.lf + self.lr)
 
 
@@ -145,14 +151,14 @@ class CTRV(FrontWheelSteering):
         update of the KinematicBicycle, making it more accurate as the turn
         becomes sharper
         """
-        yaw_rate = v / (self.lf + self.lr) * math.tan(delta)
+        yaw_rate = v / (self.lf + self.lr) * tan(delta)
 
         # only consider yaw rate in position update if it is nonzero
         if abs(yaw_rate) > 0.01:
-            self.X += v / yaw_rate * (math.sin(self.yaw + yaw_rate * dt)
-                                      - math.sin(self.yaw))
-            self.Y += v / yaw_rate * (math.cos(self.yaw)
-                                      - math.cos(self.yaw + yaw_rate * dt))
+            self.X += v / yaw_rate * (sin(self.yaw + yaw_rate * dt)
+                                      - sin(self.yaw))
+            self.Y += v / yaw_rate * (cos(self.yaw)
+                                      - cos(self.yaw + yaw_rate * dt))
 
             self.yaw += yaw_rate * dt
             self.yaw = clip_to_pi(self.yaw)

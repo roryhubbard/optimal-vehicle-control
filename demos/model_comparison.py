@@ -1,7 +1,14 @@
+import sys
 import math
+from pathlib import Path
 import matplotlib.pyplot as plt
-from dynamic_models import DynamicBicycle
-from kinematic_models import CTRV, FrontWheelSteering
+
+root = str(Path(__file__).parents[1].resolve())
+if root not in sys.path:
+    sys.path.append(root)
+
+from models.dynamic_models import DynamicBicycle
+from models.kinematic_models import CTRV, FrontWheelSteering
 
 
 plt.rcParams['figure.figsize'] = [16, 10]

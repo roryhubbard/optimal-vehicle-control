@@ -1,8 +1,14 @@
+import sys
+from pathlib import Path
 from math import sin, cos
 import numpy as np
 
+root = str(Path(__file__).parents[1].resolve())
+if root not in sys.path:
+    sys.path.append(root)
+
 from lib.utils import clip_to_pi
-from model_templates import VehicleModel
+from models.model_templates import VehicleModel
 
 
 class DynamicBicycle(VehicleModel):
