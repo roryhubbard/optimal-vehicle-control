@@ -52,15 +52,6 @@ class KinematicBicycle(VehicleModel):
             self.lf * math.tan(delta_r) + self.lr * math.tan(delta_f),
             self.lf + self.lr)
 
-    def observe(self):
-        """
-        Return observable states
-
-        Output:
-        - [global x position, global y position, yaw angle]
-        """
-        return (self.X, self.Y, self.yaw)
-
 
 class FrontWheelSteeringBicycle(KinematicBicycle):
     """

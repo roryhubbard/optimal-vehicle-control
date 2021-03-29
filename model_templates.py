@@ -17,5 +17,11 @@ class VehicleModel:
     def update(self, *args, **kwargs):
         raise NotImplementedError()
 
-    def observe(self, *args, **kwargs):
-        raise NotImplementedError()
+    def observe(self):
+        """
+        Return observable states
+
+        Output:
+        - [global x position, global y position, yaw angle]
+        """
+        return (self.X, self.Y, self.yaw)

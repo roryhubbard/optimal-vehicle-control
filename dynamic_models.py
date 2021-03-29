@@ -98,12 +98,3 @@ class DynamicBicycle(VehicleModel):
 
         self.X += (self.vx * cos(self.yaw) - self.vy * sin(self.yaw)) * dt
         self.Y += (self.vx * sin(self.yaw) + self.vy * cos(self.yaw)) * dt
-
-    def observe(self):
-        """
-        Return observable states
-
-        Output:
-        - (global x position, global y position, yaw angle)
-        """
-        return (self.X, self.Y, self.yaw)
