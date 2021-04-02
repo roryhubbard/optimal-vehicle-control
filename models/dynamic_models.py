@@ -55,7 +55,6 @@ class DynamicBicycle(VehicleModel):
         - accel: longitudinal acceleration
         - delta: front wheel steering angle
         - dt: timestep length
-        assumes constant velocity
         """
         # model constants
         lf = self.lf
@@ -73,18 +72,18 @@ class DynamicBicycle(VehicleModel):
         self.delta = delta
 
         # [y, yd, yaw, yawd]
-        # y is radius of curvature but it doesn't contribute to
+        # y is technically radius of curvature but it doesn't contribute to
         # the update so just set it to 0
         X = np.array([0., vy, yaw, yawd])
         if vx > 0.5:
             self.A = np.array([
                 [0, 1, 0, 0],
-                [0, -(2*Caf+2*Car)/(m*vx), 0, -vx-(2*Caf*lf-2*Car*lr)/(m*vx)],
+                [0, -(2*Caf+2*Car)/(m*vx), 0, -vx+(2*Car*lr-2*Caf*lf)/(m*vx)],
                 [0, 0, 0, 1],
-                [0, -(2*lf*Caf-2*lr*Car)/(Iz*vx), 0, -(2*lf**2*Caf+2*lr**2*Car)/(Iz*vx)],
+                [0, (2*lr*Car-2*lf*Caf)/(Iz*vx), 0, -(2*lf**2*Caf+2*lr**2*Car)/(Iz*vx)],
             ])
         else:
-            # at low speeds the dynamic bicycle model is unstable
+            # at low speeds the model is unstable
             self.A = np.array([
                 [0, 1, 0, 0],
                 [0, 0, 0, 0],
