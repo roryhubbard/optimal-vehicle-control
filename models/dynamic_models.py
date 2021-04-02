@@ -34,7 +34,7 @@ class DynamicBicycle(VehicleModel):
         self.vy = 0.  # lateral velocity
         self.delta = 0.  # wheel angle of front axle
 
-        # state space
+        # lateral dynamics state space
         # X = A*X + B*U
         # Y = C*X + D*U
         # X = [y, yd, yaw, yawd]  # where y = radius of curvature
