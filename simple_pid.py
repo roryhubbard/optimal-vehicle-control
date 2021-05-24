@@ -1,7 +1,7 @@
 import time
 
 
-class PIDController:
+class SimplePID:
 
     def __init__(self, Kp, Ki, Kd):
         self.Kp = Kp
