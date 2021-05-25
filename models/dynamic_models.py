@@ -169,22 +169,3 @@ class ErrorBasedDynamicBicycle(DynamicBicycle):
         X[3] = self.yawd - yawdesdot
 
         return X
-
-# def compute_curvature(self):
-# """
-# Function to compute and return the curvature of trajectory.
-# """
-# sigma_gaus = 10
-# 5traj=self.traj
-# xp = scipy.ndimage.filters.gaussian_filter1d(input=traj[:,0],
-# sigma=sigma_gaus,order=1)
-# xpp = scipy.ndimage.filters.gaussian_filter1d(input=traj[:,0],
-# sigma=sigma_gaus,order=2)
-# yp = scipy.ndimage.filters.gaussian_filter1d(input=traj[:,1],
-# sigma=sigma_gaus,order=1)
-# ypp = scipy.ndimage.filters.gaussian_filter1d(input=traj[:,1],
-# sigma=sigma_gaus,order=2)
-# curv=np.zeros(len(traj))
-# for i in range(len(xp)):
-# curv[i] = (xp[i]*ypp[i] - yp[i]*xpp[i])/(xp[i]**2 + yp[i]**2)**1.5
-# return curv
