@@ -10,6 +10,7 @@ if root not in sys.path:
 
 from models.dynamic_models import ErrorBasedDynamicBicycle
 from controllers.lqr import lqr_gains
+from controllers.mpc import MPC
 
 
 plt.rcParams['figure.figsize'] = [16, 10]

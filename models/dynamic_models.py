@@ -50,14 +50,9 @@ class DynamicBicycle(VehicleModel):
         self.C = np.eye(4)
         self.D = np.zeros((4, 2))
 
-    def update(self, accel, delta, dt):
+    def set_state_transition_matrix(self, vx):
         """
-        Update vehicle state
-
-        Input:
-        - accel: longitudinal acceleration
-        - delta: front wheel steering angle
-        - dt: timestep length
+        Set A matrix which depends on longitudinal velocity
         """
         # model constants
         lf = self.lf
@@ -67,6 +62,23 @@ class DynamicBicycle(VehicleModel):
         Iz = self.Iz
         m = self.m
 
+        # Note: at low speeds (vx < 0.5) the model is unstable due to vx in denominator
+        self.A = np.array([
+            [0, 1, 0, 0],
+            [0, -2*(Caf+Car)/(m*vx), 0, -vx+(2*Car*lr-2*Caf*lf)/(m*vx)],
+            [0, 0, 0, 1],
+            [0, (2*lr*Car-2*lf*Caf)/(Iz*vx), 0, -(2*lf**2*Caf+2*lr**2*Car)/(Iz*vx)],
+        ])
+
+    def update(self, accel, delta, dt):
+        """
+        Update vehicle state
+
+        Input:
+        - accel: longitudinal acceleration
+        - delta: front wheel steering angle
+        - dt: timestep length
+        """
         vx = self.vx
         vy = self.vy
         yaw = self.yaw
@@ -78,21 +90,8 @@ class DynamicBicycle(VehicleModel):
         # y is technically radius of curvature but it doesn't contribute to
         # the update so just set it to 0
         X = np.array([0., vy, yaw, yawd])
-        if vx > 0.5:
-            self.A = np.array([
-                [0, 1, 0, 0],
-                [0, -2*(Caf+Car)/(m*vx), 0, -vx+(2*Car*lr-2*Caf*lf)/(m*vx)],
-                [0, 0, 0, 1],
-                [0, (2*lr*Car-2*lf*Caf)/(Iz*vx), 0, -(2*lf**2*Caf+2*lr**2*Car)/(Iz*vx)],
-            ])
-        else:
-            # at low speeds the model is unstable
-            self.A = np.array([
-                [0, 1, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 0, 0],
-            ])
+
+        self.set_state_transition_matrix(vx)
 
         U = np.array([self.delta, accel])
         Xd = self.A @ X + self.B @ U
@@ -159,6 +158,7 @@ class ErrorBasedDynamicBicycle(DynamicBicycle):
             idx_fwd = len(traj)-closest_idx-1
         yawdes = atan2((traj[closest_idx+idx_fwd][1]-self.Y),
                        (traj[closest_idx+idx_fwd][0]-self.X))
+
         # yawdes = self.vx*curv[closest_idx+idx_fwd]
         yawdesdot = 0
         X = np.zeros(4)
