@@ -1,4 +1,5 @@
 
+
 def calculate_coefficients(start, end, t):
     """
     https://courses.shadmehrlab.org/Shortcourse/minimumjerk.pdf
