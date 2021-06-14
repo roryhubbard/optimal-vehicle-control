@@ -29,7 +29,7 @@ class KinematicBicycle(VehicleModel):
         self.delta_f = 0.  # wheel angle of front axle
         self.delta_r = 0.  # wheel angle of front axle
 
-    def update(self, v, delta_f, delta_r, dt):
+    def update(self, v, delta_f, delta_r, dt, w=0):
         """
         Update vehicle state
 
@@ -38,6 +38,7 @@ class KinematicBicycle(VehicleModel):
         - delta_f: front wheel steering angle
         - delta_r: rear wheel steering angle
         - dt: timestep length
+        - w: noise to add to coordinate update
 
         Assumptions:
         - zero acceleration
@@ -45,8 +46,8 @@ class KinematicBicycle(VehicleModel):
         yaw_rate = v * cos(self.beta) / (self.lf + self.lr) \
             * (tan(delta_f) - tan(delta_r))
 
-        self.X += v * cos(self.yaw + self.beta) * dt
-        self.Y += v * sin(self.yaw + self.beta) * dt
+        self.X += v * cos(self.yaw + self.beta) * dt + w
+        self.Y += v * sin(self.yaw + self.beta) * dt + w
 
         self.yaw += yaw_rate * dt
         self.yaw = clip_to_pi(self.yaw)
@@ -69,12 +70,12 @@ class FrontWheelSteering(KinematicBicycle):
     - 0 rear wheel steering angle
     """
 
-    def update(self, v, delta, dt):
+    def update(self, v, delta, dt, w=0):
         """
         Same update calculation as KinematicBicycle but rear wheel steering
         angle will always be set to 0
         """
-        super().update(v, delta, 0., dt)
+        super().update(v, delta, 0., dt, w=w)
 
 
 class RearWheelSteering(KinematicBicycle):
@@ -87,12 +88,12 @@ class RearWheelSteering(KinematicBicycle):
     - 0 front wheel steering angle
     """
 
-    def update(self, v, delta, dt):
+    def update(self, v, delta, dt, w=0):
         """
         Same update calculation as KinematicBicycle but front wheel steering
         angle will always be set to 0
         """
-        super().update(v, 0., delta, dt)
+        super().update(v, 0., delta, dt, w=w)
 
 
 class FourWheelSteering(KinematicBicycle):
@@ -108,12 +109,12 @@ class FourWheelSteering(KinematicBicycle):
       opposite in direction
     """
 
-    def update(self, v, delta, dt):
+    def update(self, v, delta, dt, w=0):
         """
         Same update calculation as KinematicBicycle but front wheel and rear
         wheel will always be equal and opposite
         """
-        super().update(v, delta, -delta, dt)
+        super().update(v, delta, -delta, dt, w=w)
 
 
 class CrabSteering(KinematicBicycle):
@@ -128,12 +129,12 @@ class CrabSteering(KinematicBicycle):
       direction
     """
 
-    def update(self, v, delta, dt):
+    def update(self, v, delta, dt, w=0):
         """
         Same update calculation as KinematicBicycle but front wheel and rear
         wheel will always be exactly equal
         """
-        super().update(v, delta, delta, dt)
+        super().update(v, delta, delta, dt, w=w)
 
 
 class CTRV(FrontWheelSteering):
@@ -145,7 +146,7 @@ class CTRV(FrontWheelSteering):
     - constant yaw rate and velocity during updates
     """
 
-    def update(self, v, delta, dt):
+    def update(self, v, delta, dt, w=0):
         """
         CTRV update calculation incorporates the yaw rate in the position
         update of the KinematicBicycle, making it more accurate as the turn
@@ -156,9 +157,9 @@ class CTRV(FrontWheelSteering):
         # only consider yaw rate in position update if it is nonzero
         if abs(yaw_rate) > 0.01:
             self.X += v / yaw_rate * (sin(self.yaw + yaw_rate * dt)
-                                      - sin(self.yaw))
+                                      - sin(self.yaw)) + w
             self.Y += v / yaw_rate * (cos(self.yaw)
-                                      - cos(self.yaw + yaw_rate * dt))
+                                      - cos(self.yaw + yaw_rate * dt)) + w
 
             self.yaw += yaw_rate * dt
             self.yaw = clip_to_pi(self.yaw)
@@ -168,4 +169,4 @@ class CTRV(FrontWheelSteering):
         else:
             # if yaw rate is sufficiently small then just use normal kinematic
             # bicycle model for updating state
-            super().update(v, delta, 0., dt)
+            super().update(v, delta, 0., dt, w=w)
