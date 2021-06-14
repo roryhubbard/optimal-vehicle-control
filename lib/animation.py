@@ -51,14 +51,8 @@ class AxData:
             self.legend = False
         else:
             self.legend = True
-
         if self.scatter:
             self.linestyle = ''
-        else:
-            if plot_history:
-                self.marker = None
-            else:
-                self.linestyle = ''
 
 
 class Animator:
@@ -159,7 +153,12 @@ class Animator:
                 if val.scatter:
                     tmp_data.append(ax.scatter(val.x, val.y))
                 else:
-                    tmp_data.extend(ax.plot(val.x, val.y))
+                    if isinstance(val.x[0], tuple) \
+                            or isinstance(val.x[0], list):
+                        for i in range(len(val.x)):
+                            tmp_data.extend(ax.plot(val.x[i], val.y[i]))
+                    else:
+                        tmp_data.extend(ax.plot(val.x, val.y))
                 self._add_artist(k+val.label, val, ax)
             make_legend(ax, self.bbox_to_anchor.get(k), self.loc.get(k))
         if not self.static:
