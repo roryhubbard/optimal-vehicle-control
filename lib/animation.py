@@ -57,7 +57,7 @@ class AxData:
 
 class Animator:
 
-    def __init__(self, speed_multiplier, ax_data, dt, fig, ax):
+    def __init__(self, speed_multiplier, ax_data, dt, fig, ax, show_legend=True):
         self.speed_multiplier = speed_multiplier
         self.ax_data = ax_data
         self.dt = dt
@@ -68,6 +68,7 @@ class Animator:
         self.loc = dict()
         self.save_path = None
         self.static = False
+        self.show_legend = show_legend
 
     def set_leg_loc(self, bbox_to_anchor, loc='center left', ax_key='*'):
         self.bbox_to_anchor[ax_key] = bbox_to_anchor
@@ -160,7 +161,8 @@ class Animator:
                     else:
                         tmp_data.extend(ax.plot(val.x, val.y))
                 self._add_artist(k+val.label, val, ax)
-            make_legend(ax, self.bbox_to_anchor.get(k), self.loc.get(k))
+            if self.show_legend:
+                make_legend(ax, self.bbox_to_anchor.get(k), self.loc.get(k))
         if not self.static:
             for _ in range(len(tmp_data)):
                 tmp_data.pop().remove()
