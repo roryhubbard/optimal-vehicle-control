@@ -169,4 +169,4 @@ class CTRV(FrontWheelSteering):
         else:
             # if yaw rate is sufficiently small then just use normal kinematic
             # bicycle model for updating state
-            super().update(v, delta, 0., dt, w=w)
+            super().update(v, delta, dt, w=w)
