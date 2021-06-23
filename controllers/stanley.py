@@ -25,5 +25,5 @@ class StanleyController():
         _dx_local, dy_local = rotate_and_translate(
             np.array([dx_global, dy_global]), -target_yaw)
 
-        u = yaw_error + math.atan2(self.k * dy_global, veh_speed)
+        u = yaw_error + math.atan(self.k * dy_local / (.5 + veh_speed))
         return min(max(u, -self.delta_max), self.delta_max)
